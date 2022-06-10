@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,15 +32,20 @@ public class Expense {
     private long id;
 
     @Column(name = "expense_name")
+    @NotNull(message = "Expense name must not be null")
+    @Size(message = "Expense name must be of atleast 3 characters")
     private String name;
 
     private String description;
 
     @Column(name = "expense_amount")
+    @NotNull(message = "Expense amount can not be null")
     private BigDecimal amount;
 
+    @NotNull(message = "Category can not be null")
     private String category;
 
+    @NotNull(message = "Date can not be null")
     private Date date;
 
     @Column(name = "created_time", nullable = false, updatable = false)
