@@ -1,5 +1,7 @@
 package com.dev.expensetracker.exceptions;
 
+import java.util.Date;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,7 +19,7 @@ public class GlobalExceptionHandler {
 
         errorObject.setStatusCode(statusCode.value());
         errorObject.setMessage(ex.getMessage());
-        errorObject.setTimestamp(System.currentTimeMillis());
+        errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<ErrorObject>(errorObject, statusCode);
     }
