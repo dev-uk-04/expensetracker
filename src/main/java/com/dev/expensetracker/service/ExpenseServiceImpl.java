@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dev.expensetracker.entity.Expense;
+import com.dev.expensetracker.exceptions.ResourceNotFoundException;
 import com.dev.expensetracker.repository.IExpenseRepository;
 
 @Service
@@ -29,7 +30,7 @@ public class ExpenseServiceImpl implements IExpenseService{
             return expense.get();
         }
 
-        throw new RuntimeException("Expense ID not found in database!");
+        throw new ResourceNotFoundException("Expense ID not found in database!");
     }
 
     @Override
