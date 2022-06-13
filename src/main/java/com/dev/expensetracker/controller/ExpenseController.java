@@ -26,7 +26,7 @@ public class ExpenseController {
 
     @Autowired
     private IExpenseService expenseService;
-    
+
     @GetMapping("/expenses")
     public List<Expense> getAllExpenses(Pageable page) {
         return expenseService.getAllExpenses(page).toList();
@@ -66,8 +66,8 @@ public class ExpenseController {
 
     @GetMapping("/expenses/date")
     public List<Expense> getExpensesByDate(@RequestParam(required = false) Date startDate,
-                                           @RequestParam(required = false) Date endDate,
-                                           Pageable page) {
+            @RequestParam(required = false) Date endDate,
+            Pageable page) {
         return expenseService.readByDate(startDate, endDate, page);
     }
 }
