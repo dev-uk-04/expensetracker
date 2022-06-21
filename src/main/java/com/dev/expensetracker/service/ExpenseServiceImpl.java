@@ -14,19 +14,22 @@ import com.dev.expensetracker.exceptions.ResourceNotFoundException;
 import com.dev.expensetracker.repository.IExpenseRepository;
 
 @Service
-public class ExpenseServiceImpl implements IExpenseService{
+public class ExpenseServiceImpl implements IExpenseService {
 
     @Autowired
     private IExpenseRepository expenseRepository;
 
+    @Autowired
+    private IUserService userService;
+
     @Override
     public Page<Expense> getAllExpenses(Pageable page) {
-        return expenseRepository.findAll(page);
+        return expenseRepository.findByUserId(userService.getLoggedInUser().getId(), page);
     }
 
     @Override
     public Expense getExpenseById(Long id) {
-        Optional<Expense> expense = expenseRepository.findById(id);
+        Optional<Expense> expense = expenseRepository.findByUserIdAndId(userService.getLoggedInUser().getId(), id);
 
         if (expense.isPresent()) {
             return expense.get();
@@ -40,9 +43,10 @@ public class ExpenseServiceImpl implements IExpenseService{
         Expense expense = getExpenseById(id);
         expenseRepository.delete(expense);
     }
-    
+
     @Override
     public Expense saveExpenseDetails(Expense expense) {
+        expense.setUser(userService.getLoggedInUser());
         return expenseRepository.save(expense);
     }
 
@@ -50,21 +54,23 @@ public class ExpenseServiceImpl implements IExpenseService{
     public Expense updateExpenseDetails(Long id, Expense expense) {
         Expense existingExpense = getExpenseById(id);
         existingExpense.setName(expense.getName() != null ? expense.getName() : existingExpense.getName());
-        existingExpense.setDescription(expense.getDescription() != null ? expense.getDescription() : existingExpense.getDescription());
+        existingExpense.setDescription(
+                expense.getDescription() != null ? expense.getDescription() : existingExpense.getDescription());
         existingExpense.setAmount(expense.getAmount() != null ? expense.getAmount() : existingExpense.getAmount());
-        existingExpense.setCategory(expense.getCategory() != null ? expense.getCategory() : existingExpense.getCategory());
+        existingExpense
+                .setCategory(expense.getCategory() != null ? expense.getCategory() : existingExpense.getCategory());
         existingExpense.setDate(expense.getDate() != null ? expense.getDate() : existingExpense.getDate());
         return expenseRepository.save(existingExpense);
     }
 
     @Override
     public List<Expense> readByCategory(String category, Pageable page) {
-        return expenseRepository.findByCategory(category, page).toList();
+        return expenseRepository.findByUserIdAndCategory(userService.getLoggedInUser().getId(), category, page).toList();
     }
 
     @Override
     public List<Expense> readByName(String name, Pageable page) {
-        return expenseRepository.findByNameContaining(name, page).toList();
+        return expenseRepository.findByUserIdAndNameContaining(userService.getLoggedInUser().getId(), name, page).toList();
     }
 
     @Override
@@ -77,7 +83,7 @@ public class ExpenseServiceImpl implements IExpenseService{
         if (endDate == null) {
             endDate = new Date(System.currentTimeMillis());
         }
-        return expenseRepository.findByDateBetween(startDate, endDate, page).toList();
+        return expenseRepository.findByUserIdAndDateBetween(userService.getLoggedInUser().getId(), startDate, endDate, page).toList();
     }
 
 }
